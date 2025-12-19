@@ -161,9 +161,9 @@ const Rules: React.FC = () => {
                         <span>Type:</span>
                         <select value={filterTable} onChange={(e) => setFilterTable(e.target.value)} className="filter-select">
                             <option value="All">All</option>
-                            <option value="filter">filter</option>
-                            <option value="nat">nat</option>
-                            <option value="mangle">mangle</option>
+                            <option value="FILTER">FILTER</option>
+                            <option value="NAT">NAT</option>
+                            <option value="MANGLE">MANGLE</option>
                         </select>
                     </div>
                     <div className="select-wrapper">
