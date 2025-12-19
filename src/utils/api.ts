@@ -4,6 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
+    // console.log('DEBUG: Current Token:', token); 
     return {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
@@ -54,6 +55,20 @@ export const api = {
             body: JSON.stringify(rule),
         });
         return response.json();
+    },
+
+    deleteRule: async (ruleId: number) => {
+        const response = await fetch(`${BASE_URL}/rules/${ruleId}/`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Delete Rule Error:', response.status, errorText);
+            throw new Error(`Failed to delete rule (Status: ${response.status}). ${errorText}`);
+        }
+        return true;
     },
 
     enableRule: async (ruleId: string) => {

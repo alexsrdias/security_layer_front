@@ -11,13 +11,15 @@ interface RuleModalProps {
 
 const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
     const [formData, setFormData] = useState<Partial<FirewallRule>>({
-        table: 'filter',
+        table_name: 'filter',
         chain: 'INPUT',
         action: 'ACCEPT',
         protocol: 'tcp',
-        source: 'any',
-        destination: 'any',
-        description: ''
+        src_ip: '',
+        dst_ip: '',
+        dst_port: 0,
+        priority: 100,
+        log_prefix: ''
     });
     const [loading, setLoading] = useState(false);
 
@@ -49,12 +51,12 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                         <div className="form-group">
                             <label>Table</label>
                             <select
-                                value={formData.table}
-                                onChange={e => setFormData({ ...formData, table: e.target.value as any })}
+                                value={formData.table_name}
+                                onChange={e => setFormData({ ...formData, table_name: e.target.value })}
                             >
-                                <option value="filter">filter</option>
-                                <option value="nat">nat</option>
-                                <option value="mangle">mangle</option>
+                                <option value="FILTER">FILTER</option>
+                                <option value="NAT">NAT</option>
+                                <option value="MANGLE">MANGLE</option>
                             </select>
                         </div>
 
@@ -62,7 +64,7 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                             <label>Chain</label>
                             <select
                                 value={formData.chain}
-                                onChange={e => setFormData({ ...formData, chain: e.target.value as any })}
+                                onChange={e => setFormData({ ...formData, chain: e.target.value })}
                             >
                                 <option value="INPUT">INPUT</option>
                                 <option value="FORWARD">FORWARD</option>
@@ -89,7 +91,7 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                             <label>Action</label>
                             <select
                                 value={formData.action}
-                                onChange={e => setFormData({ ...formData, action: e.target.value as any })}
+                                onChange={e => setFormData({ ...formData, action: e.target.value })}
                             >
                                 <option value="ACCEPT">ACCEPT</option>
                                 <option value="DROP">DROP</option>
@@ -104,9 +106,9 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                             <label>Source IP / Range</label>
                             <input
                                 type="text"
-                                placeholder="e.g. 192.168.1.0/24 or any"
-                                value={formData.source}
-                                onChange={e => setFormData({ ...formData, source: e.target.value })}
+                                placeholder="e.g. 192.168.1.0/24"
+                                value={formData.src_ip}
+                                onChange={e => setFormData({ ...formData, src_ip: e.target.value })}
                             />
                         </div>
 
@@ -114,19 +116,19 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                             <label>Destination IP / Range</label>
                             <input
                                 type="text"
-                                placeholder="e.g. 10.0.0.1 or any"
-                                value={formData.destination}
-                                onChange={e => setFormData({ ...formData, destination: e.target.value })}
+                                placeholder="e.g. 10.0.0.1"
+                                value={formData.dst_ip}
+                                onChange={e => setFormData({ ...formData, dst_ip: e.target.value })}
                             />
                         </div>
 
                         <div className="form-group">
                             <label>Port (Optional)</label>
                             <input
-                                type="text"
+                                type="number"
                                 placeholder="e.g. 80, 443"
-                                value={formData.port}
-                                onChange={e => setFormData({ ...formData, port: e.target.value })}
+                                value={formData.dst_port || ''}
+                                onChange={e => setFormData({ ...formData, dst_port: parseInt(e.target.value) || 0 })}
                             />
                         </div>
 
@@ -134,8 +136,8 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                             <label>Description / Comment</label>
                             <textarea
                                 placeholder="Why is this rule being created?"
-                                value={formData.description}
-                                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                value={formData.log_prefix || ''}
+                                onChange={e => setFormData({ ...formData, log_prefix: e.target.value })}
                             />
                         </div>
                     </div>

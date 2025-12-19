@@ -8,20 +8,23 @@ export interface User {
 }
 
 export interface FirewallRule {
-  id: string;
-  table: 'filter' | 'nat' | 'mangle';
-  chain: 'INPUT' | 'OUTPUT' | 'FORWARD' | 'PREROUTING' | 'POSTROUTING';
-  source: string;
-  destination: string;
+  id: number;
+  priority: number;
+  table_name: string;
+  chain: string;
+  in_interface?: string;
+  out_interface?: string;
+  src_ip?: string;
+  dst_ip?: string;
   protocol: string;
-  port?: string;
-  action: 'ACCEPT' | 'DROP' | 'REJECT' | 'SNAT' | 'DNAT' | 'MASQUERADE';
-  state?: string;
-  description: string;
-  hits_packets: number;
-  hits_bytes: string;
-  is_active: boolean;
-  version_id: string;
+  src_port?: number;
+  dst_port?: number;
+  action: string;
+  log_prefix?: string;
+  enabled: boolean;
+  status: 'DRAFT' | 'APPLIED' | 'PENDING';
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface RuleVersion {

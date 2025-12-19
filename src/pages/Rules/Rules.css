@@ -206,3 +206,37 @@
     color: #fff;
     border-color: var(--accent-primary);
 }
+
+.filter-select {
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 0.875rem;
+    color: #475569;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    min-width: 120px;
+    height: 38px;
+    transition: all 0.2s;
+}
+
+.filter-select:hover {
+    border-color: #cbd5e1;
+}
+
+.filter-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
