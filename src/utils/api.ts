@@ -1,0 +1,99 @@
+import type { FirewallRule, SystemStatus, User } from '../types';
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
+
+const getHeaders = () => {
+    const token = localStorage.getItem('token');
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    };
+};
+
+export const api = {
+    // 🔐 Autenticação
+    login: async (username: string, password: string): Promise<User> => {
+        const params = new URLSearchParams();
+        params.append('username', username);
+        params.append('password', password);
+        params.append('grant_type', '');
+        params.append('scope', '');
+        params.append('client_id', '');
+        params.append('client_secret', '');
+
+        const response = await fetch(`${BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'accept': 'application/json',
+            },
+            body: params.toString(),
+        });
+
+        if (!response.ok) throw new Error('Falha na autenticação');
+        const data = await response.json();
+        if (data.access_token) {
+            localStorage.setItem('token', data.access_token);
+        }
+        return data;
+    },
+
+    // 🛡️ Regras de Firewall
+    getRules: async (): Promise<FirewallRule[]> => {
+        const response = await fetch(`${BASE_URL}/rules/`, {
+            headers: getHeaders(),
+        });
+        if (!response.ok) throw new Error('Não foi possível carregar as regras');
+        return response.json();
+    },
+
+    createRule: async (rule: Partial<FirewallRule>) => {
+        const response = await fetch(`${BASE_URL}/rules/`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(rule),
+        });
+        return response.json();
+    },
+
+    enableRule: async (ruleId: string) => {
+        const response = await fetch(`${BASE_URL}/rules/${ruleId}/enable`, {
+            method: 'POST',
+            headers: getHeaders(),
+        });
+        return response.json();
+    },
+
+    // 🚢 Deploy e Configuração
+    deploy: async () => {
+        const response = await fetch(`${BASE_URL}/deploy/`, {
+            method: 'POST',
+            headers: getHeaders(),
+        });
+        return response.json();
+    },
+
+    rollback: async (versionId: string) => {
+        const response = await fetch(`${BASE_URL}/deploy/rollback/${versionId}`, {
+            method: 'POST',
+            headers: getHeaders(),
+        });
+        return response.json();
+    },
+
+    // 📊 Sistema e Telemetria
+    getSystemStatus: async (): Promise<SystemStatus> => {
+        const response = await fetch(`${BASE_URL}/system/status`, {
+            headers: getHeaders(),
+        });
+        return response.json();
+    },
+
+    // 📜 Auditoria
+    getAuditLogs: async () => {
+        const response = await fetch(`${BASE_URL}/audit/logs`, {
+            headers: getHeaders(),
+        });
+        return response.json();
+    }
+};

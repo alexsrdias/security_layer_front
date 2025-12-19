@@ -1,0 +1,127 @@
+import React from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import {
+    LayoutDashboard,
+    Shield,
+    Box,
+    Users,
+    Settings,
+    LogOut,
+    Bell,
+    Search,
+    History,
+    Activity,
+    FileBarChart,
+    Network,
+    RotateCcw
+} from 'lucide-react';
+import './Layout.css';
+
+const Layout: React.FC = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
+
+    return (
+        <div className="layout-container">
+            <aside className="sidebar">
+                <div className="sidebar-header">
+                    <div className="sidebar-logo-container">
+                        <img src="/logo.png" alt="Logo" className="sidebar-logo-img" />
+                    </div>
+                </div>
+
+                <nav className="sidebar-nav">
+                    <div className="nav-group">
+                        <span className="nav-group-title">NAVEGAÇÃO</span>
+                        <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <LayoutDashboard size={20} />
+                            <span>Dashboard</span>
+                        </NavLink>
+                        <NavLink to="/rules" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <Shield size={20} />
+                            <span>Regras</span>
+                        </NavLink>
+                        <NavLink to="/objects" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <Box size={20} />
+                            <span>Objetos</span>
+                        </NavLink>
+                        <NavLink to="/groups" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <Users size={20} />
+                            <span>Grupos</span>
+                        </NavLink>
+                        <NavLink to="/chains" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <Network size={20} />
+                            <span>Cadeias</span>
+                        </NavLink>
+                    </div>
+
+                    <div className="nav-group">
+                        <span className="nav-group-title">SISTEMA</span>
+                        <NavLink to="/logs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <History size={20} />
+                            <span>Logs de Auditoria</span>
+                        </NavLink>
+                        <NavLink to="/versions" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <RotateCcw size={20} />
+                            <span>Versões & Rollback</span>
+                        </NavLink>
+                        <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <FileBarChart size={20} />
+                            <span>Relatórios</span>
+                        </NavLink>
+                        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                            <Settings size={20} />
+                            <span>Configurações</span>
+                        </NavLink>
+                    </div>
+                </nav>
+
+                <div className="sidebar-footer">
+                    <div className="user-profile">
+                        <div className="user-avatar">AD</div>
+                        <div className="user-info">
+                            <span className="user-name">Admin User</span>
+                            <span className="user-role">Administrator</span>
+                        </div>
+                    </div>
+                    <button className="logout-btn" onClick={handleLogout}>
+                        <LogOut size={18} />
+                    </button>
+                </div>
+            </aside>
+
+            <main className="main-content">
+                <header className="top-header">
+                    <div className="header-search">
+                        <Search size={18} className="search-icon" />
+                        <input type="text" placeholder="Procurar regras, logs ou objetos..." />
+                    </div>
+                    <div className="header-actions">
+                        <button className="header-btn">
+                            <Activity size={20} />
+                        </button>
+                        <button className="header-btn">
+                            <Bell size={20} />
+                            <span className="notification-dot"></span>
+                        </button>
+                        <div className="header-divider"></div>
+                        <div className="system-health">
+                            <div className="health-indicator success"></div>
+                            <span>System Online</span>
+                        </div>
+                    </div>
+                </header>
+
+                <section className="content-area">
+                    <Outlet />
+                </section>
+            </main>
+        </div>
+    );
+};
+
+export default Layout;
