@@ -141,4 +141,4 @@ src/
 5. Open a Pull Request.
 
 ---
-© 2024 NetFilter Defense Inc. All rights reserved.
+© 2025 Security Layer Inc. All rights reserved.
