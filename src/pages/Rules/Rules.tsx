@@ -51,14 +51,35 @@ const Rules: React.FC = () => {
         fetchRules();
     }, []);
 
-    const handleCreateRule = async (newRule: Partial<FirewallRule>) => {
+    // Create / Edit State
+    const [editingRule, setEditingRule] = useState<FirewallRule | null>(null);
+
+    const handleSaveRule = async (ruleData: Partial<FirewallRule>) => {
         try {
-            await api.createRule(newRule);
+            if (editingRule) {
+                // Update existing rule
+                await api.updateRule(editingRule.id, ruleData);
+            } else {
+                // Create new rule
+                await api.createRule(ruleData);
+            }
             await fetchRules();
+            setEditingRule(null); // Reset editing state
         } catch (error) {
-            console.error('Error creating rule:', error);
-            throw error;
+            console.error('Error saving rule:', error);
+            throw error; // Let modal handle error
         }
+    };
+
+    const openCreateModal = () => {
+        setEditingRule(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEditRule = (rule: FirewallRule) => {
+        setEditingRule(rule);
+        setIsViewModalOpen(false); // Close view modal if open
+        setIsModalOpen(true); // Open edit/create modal
     };
 
     const openViewModal = (rule: FirewallRule) => {
@@ -82,7 +103,7 @@ const Rules: React.FC = () => {
             setRuleToDelete(null);
         } catch (error: any) {
             console.error('Error deleting rule:', error);
-            alert(`Erro ao apagar regra: ${error.message}`);
+            alert(`Error deleting rule: ${error.message}`);
         } finally {
             setIsDeleting(false);
         }
@@ -117,11 +138,11 @@ const Rules: React.FC = () => {
         <div className="rules-container fade-in">
             <header className="page-header">
                 <div>
-                    <div className="breadcrumb">Sistema de Gestão iptables</div>
+                    <div className="breadcrumb">Firewall Management System</div>
                     <h1>Firewall Rules</h1>
-                    <p className="subtitle">Gestão completa das regras iptables ativas</p>
+                    <p className="subtitle">Complete management of active firewall rules</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+                <button className="btn btn-primary" onClick={openCreateModal}>
                     <Plus size={20} /> New Rule
                 </button>
             </header>
@@ -129,13 +150,15 @@ const Rules: React.FC = () => {
             <RuleModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSave={handleCreateRule}
+                onSave={handleSaveRule}
+                initialData={editingRule}
             />
 
             <ViewRuleModal
                 isOpen={isViewModalOpen}
                 rule={ruleToView}
                 onClose={() => setIsViewModalOpen(false)}
+                onEdit={handleEditRule}
             />
 
             <DeleteRuleModal
@@ -232,8 +255,8 @@ const Rules: React.FC = () => {
                                             </td>
                                             <td><span className="table-badge">{rule.table_name}</span></td>
                                             <td><span className="chain-badge">{rule.chain}</span></td>
-                                            <td><code className="code-text">{rule.src_ip || '*'}</code></td>
-                                            <td><code className="code-text">{rule.dst_ip || '*'}</code></td>
+                                            <td><code className="code-text">{rule.src_ip || 'any'}</code></td>
+                                            <td><code className="code-text">{rule.dst_ip || 'any'}</code></td>
                                             <td>
                                                 <code className="code-text">
                                                     {rule.protocol}

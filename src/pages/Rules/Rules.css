@@ -92,7 +92,7 @@
 .rules-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
 }
 
 .rules-table th {
@@ -116,6 +116,7 @@
 .type-pill {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     font-size: 0.8rem;
     color: var(--text-secondary);
@@ -171,6 +172,7 @@
 
 .row-actions {
     display: flex;
+    justify-content: center;
     gap: 8px;
 }
 

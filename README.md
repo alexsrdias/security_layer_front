@@ -1,73 +1,106 @@
-# React + TypeScript + Vite
+# Security Layer Frontend - Firewall Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive web interface for managing Linux firewall rules (iptables) centrally. This frontend interacts with a Python/FastAPI backend to provide a seamless user experience for security administrators.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dashboard**: 
+  - Real-time system health and status monitoring.
+  - Visual representation of network traffic (Inbound/Outbound).
+  - Recent audit logs showing user activities and rule changes.
+  - Active vs. Configured rules statistics.
 
-## React Compiler
+- **Firewall Rules Management**:
+  - **CRUD Operations**: Create, Read, Update, and Delete firewall rules.
+  - **Advanced Filtering**: Filter rules by Source/Destination IP, Protocol, Port, Table (Filter, NAT, Mangle), Chain, and Status.
+  - **Edit Capabilities**: Modify existing rules directly from the details view.
+  - **Validation**: Input validation for IPs and required fields.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Security & Access**:
+  - Login page with JWT-based authentication.
+  - Protected routes ensuring only authenticated users can access management features.
 
-## Expanding the ESLint configuration
+- **User Experience**:
+  - Clean, modern UI inspired by top-tier security tools.
+  - Responsive design for various screen sizes.
+  - Meaningful visual feedback (success/error toasts, status badges).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Framework**: [React 18+](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Routing**: [React Router v6](https://reactrouter.com/)
+- **State Management**: React Hooks (useState, useEffect, Context)
+- **Styling**: Vanilla CSS with CSS Variables for theming (Dark/Light mode ready structures)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📋 Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js (v18.0.0 or higher recommended)
+- npm (v9.0.0 or higher) or yarn
+
+## ⚙️ Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd security_layer_front
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env` file in the root directory if you need to override the default API URL.
+   
+   ```env
+   VITE_API_URL=http://localhost:8000/v1
+   ```
+   *Default is `http://localhost:8000/v1` if not specified.*
+
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+   Access the app at `http://localhost:5173`.
+
+## 📦 Build for Production
+
+To create a production-ready build:
+
+```bash
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will generate static assets in the `dist` folder, ready to be served by Nginx, Apache, or any static host.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📂 Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/     # Reusable UI components (Layout, ProtectedRoute, etc.)
+├── pages/          # Application pages
+│   ├── Dashboard/  # Dashboard views and logic
+│   ├── Rules/      # Rules listing, management modals, and filters
+│   ├── Login/      # Authentication page
+│   └── ...
+├── utils/          # Utility functions and API client (axios/fetch wrapper)
+├── types/          # TypeScript interfaces and type definitions
+├── App.tsx         # Main application component and routing
+└── main.tsx        # Entry point
+```
+
+## 🤝 Contribution
+
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+© 2024 NetFilter Defense Inc. All rights reserved.

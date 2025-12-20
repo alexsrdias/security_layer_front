@@ -7,9 +7,10 @@ interface ViewRuleModalProps {
     isOpen: boolean;
     rule: FirewallRule | null;
     onClose: () => void;
+    onEdit?: (rule: FirewallRule) => void;
 }
 
-const ViewRuleModal: React.FC<ViewRuleModalProps> = ({ isOpen, rule, onClose }) => {
+const ViewRuleModal: React.FC<ViewRuleModalProps> = ({ isOpen, rule, onClose, onEdit }) => {
     if (!isOpen || !rule) return null;
 
     return (
@@ -108,8 +109,11 @@ const ViewRuleModal: React.FC<ViewRuleModalProps> = ({ isOpen, rule, onClose }) 
                     </div>
                 </div>
 
-                <footer className="view-modal-footer">
-                    <button className="btn btn-primary" onClick={onClose}>Close</button>
+                <footer className="view-modal-footer" style={{ justifyContent: 'space-between', display: 'flex' }}>
+                    {onEdit && (
+                        <button className="btn btn-primary" onClick={() => onEdit(rule)}>Edit Rule</button>
+                    )}
+                    <button className="btn btn-secondary" onClick={onClose}>Close</button>
                 </footer>
             </div>
         </div>

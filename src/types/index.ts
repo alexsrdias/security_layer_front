@@ -43,3 +43,12 @@ export interface SystemStatus {
   cpu_usage?: number;
   mem_usage?: number;
 }
+
+export interface AuditLog {
+  id: number;
+  action: string;
+  username: string;
+  details: string;
+  timestamp: string;
+  severity?: 'info' | 'warning' | 'error' | 'success';
+}

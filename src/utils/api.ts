@@ -31,7 +31,7 @@ export const api = {
             body: params.toString(),
         });
 
-        if (!response.ok) throw new Error('Falha na autenticação');
+        if (!response.ok) throw new Error('Authentication failed');
         const data = await response.json();
         if (data.access_token) {
             localStorage.setItem('token', data.access_token);
@@ -44,7 +44,7 @@ export const api = {
         const response = await fetch(`${BASE_URL}/rules/`, {
             headers: getHeaders(),
         });
-        if (!response.ok) throw new Error('Não foi possível carregar as regras');
+        if (!response.ok) throw new Error('Could not load rules');
         return response.json();
     },
 
@@ -54,6 +54,18 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(rule),
         });
+        return response.json();
+    },
+
+    updateRule: async (ruleId: number, rule: Partial<FirewallRule>) => {
+        const response = await fetch(`${BASE_URL}/rules/${ruleId}/`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(rule),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to update rule (Status: ${response.status})`);
+        }
         return response.json();
     },
 

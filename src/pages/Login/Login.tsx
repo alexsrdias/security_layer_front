@@ -20,7 +20,7 @@ const Login: React.FC = () => {
             await api.login(username, password);
             navigate('/dashboard');
         } catch (err) {
-            setError('Credenciais inválidas ou erro de conexão.');
+            setError('Invalid credentials or connection error.');
         } finally {
             setLoading(false);
         }
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
                 <form className="login-form" onSubmit={handleLogin}>
                     {error && <div className="error-message">{error}</div>}
                     <div className="form-group">
-                        <label>Username or Email Address</label>
+                        <label>Username</label>
                         <div className="input-with-icon">
                             <User size={18} className="input-icon" />
                             <input
@@ -55,7 +55,6 @@ const Login: React.FC = () => {
                     <div className="form-group">
                         <div className="label-row">
                             <label>Password</label>
-                            <a href="#" className="forgot-link">Forgot Password?</a>
                         </div>
                         <div className="input-with-icon">
                             <Lock size={18} className="input-icon" />

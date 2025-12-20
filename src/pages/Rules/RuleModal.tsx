@@ -7,10 +7,11 @@ interface RuleModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (rule: Partial<FirewallRule>) => Promise<void>;
+    initialData?: FirewallRule | null;
 }
 
-const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
-    const [formData, setFormData] = useState<Partial<FirewallRule>>({
+const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave, initialData }) => {
+    const [formData, setFormData] = React.useState<Partial<FirewallRule>>({
         table_name: 'filter',
         chain: 'INPUT',
         action: 'ACCEPT',
@@ -22,6 +23,25 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
         log_prefix: ''
     });
     const [loading, setLoading] = useState(false);
+
+    React.useEffect(() => {
+        if (isOpen && initialData) {
+            setFormData(initialData);
+        } else if (isOpen && !initialData) {
+            // Reset if opening in create mode
+            setFormData({
+                table_name: 'filter',
+                chain: 'INPUT',
+                action: 'ACCEPT',
+                protocol: 'tcp',
+                src_ip: '',
+                dst_ip: '',
+                dst_port: 0,
+                priority: 100,
+                log_prefix: ''
+            });
+        }
+    }, [isOpen, initialData]);
 
     if (!isOpen) return null;
 
@@ -42,7 +62,7 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
         <div className="modal-overlay">
             <div className="modal-card fade-in">
                 <header className="modal-header">
-                    <h2>Create New Firewall Rule</h2>
+                    <h2>{initialData ? 'Edit Firewall Rule' : 'Create New Firewall Rule'}</h2>
                     <button onClick={onClose} className="close-btn"><X size={20} /></button>
                 </header>
 
@@ -145,7 +165,7 @@ const RuleModal: React.FC<RuleModalProps> = ({ isOpen, onClose, onSave }) => {
                     <footer className="modal-footer">
                         <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>
                         <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading ? 'Creating...' : 'Create Rule'}
+                            {loading ? 'Saving...' : (initialData ? 'Update Rule' : 'Create Rule')}
                         </button>
                     </footer>
                 </form>

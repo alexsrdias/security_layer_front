@@ -31,28 +31,75 @@ const data = [
 
 const Dashboard: React.FC = () => {
     const [status, setStatus] = useState<any>(null);
+    const [logs, setLogs] = useState<any[]>([]); // Using any[] temporarily if strict typing fails, or AuditLog[]
+    const [rulesStats, setRulesStats] = useState<{ active: number, total: number } | null>(null);
 
     useEffect(() => {
-        const fetchStatus = async () => {
+        const fetchData = async () => {
             try {
-                const data = await api.getSystemStatus();
-                setStatus(data);
+                const [statusData, logsData, rulesData] = await Promise.all([
+                    api.getSystemStatus().catch(err => console.error('System status error:', err)),
+                    api.getAuditLogs().catch(err => console.error('Audit logs error:', err)),
+                    api.getRules().catch(err => console.error('Rules fetch error:', err))
+                ]);
+
+                if (statusData) setStatus(statusData);
+
+                if (rulesData) {
+                    const total = rulesData.length;
+                    const active = rulesData.filter((r: any) => r.status === 'APPLIED').length;
+                    setRulesStats({ active, total });
+                }
+
+                if (logsData) {
+                    // Sort by timestamp desc and take top 10
+                    const sortedLogs = Array.isArray(logsData) ? logsData.sort((a: any, b: any) =>
+                        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                    ).slice(0, 10) : [];
+                    setLogs(sortedLogs);
+                }
             } catch (error) {
-                console.error('Failed to fetch system status:', error);
+                console.error('Failed to fetch dashboard data:', error);
             }
         };
-        fetchStatus();
+        fetchData();
     }, []);
+
+    const formatTime = (isoString: string) => {
+        if (!isoString) return '-';
+        const date = new Date(isoString);
+        // Short format: MM/DD HH:mm
+        return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    };
+
+    const getSeverityClass = (log: any) => {
+        if (log.severity) return log.severity;
+        const text = (log.action + log.details).toLowerCase();
+        if (text.includes('alert') || text.includes('drop') || text.includes('error') || text.includes('dnat')) return 'alert';
+        if (text.includes('success') || text.includes('rollback') || text.includes('applied') || text.includes('create')) return 'success';
+        return '';
+    };
+
+    // Helper to extract ID from details string if possible
+    const extractId = (details: string): string => {
+        if (!details) return '-';
+        // Look for pattern "ID: 123" or "rule 123" or "#123"
+        const match = details.match(/(?:id|rule|regra)[:\s#]*(\d+)/i);
+        return match ? `#${match[1]}` : '-';
+    };
+
+
+
     return (
         <div className="dashboard-container fade-in">
             <header className="page-header">
                 <div>
                     <h1>Dashboard Overview</h1>
-                    <p className="subtitle">Centralized iptables Management on Ubuntu LTS</p>
+                    <p className="subtitle">Centralized Firewall Management on Ubuntu LTS</p>
                 </div>
                 <div className="header-actions">
                     <button className="btn btn-secondary">Download PDF</button>
-                    <button className="btn btn-primary">Refresh Data</button>
+                    <button className="btn btn-primary" onClick={() => window.location.reload()}>Refresh Data</button>
                 </div>
             </header>
 
@@ -76,9 +123,11 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="stat-info">
                         <span className="stat-label">Active Rules</span>
-                        <span className="stat-value">{status?.active_rules || '3,450'}</span>
+                        <span className="stat-value">
+                            {rulesStats ? `${rulesStats.active} / ${rulesStats.total}` : 'Loading...'}
+                        </span>
                         <span className="stat-change">
-                            v1.4.2 Active
+                            Active / Configured
                         </span>
                     </div>
                 </div>
@@ -89,9 +138,9 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="stat-info">
                         <span className="stat-label">Blocked (24h)</span>
-                        <span className="stat-value">{status?.blocked_24h || '15,204'}</span>
+                        <span className="stat-value">{status?.blocked_24h || '0'}</span>
                         <span className="stat-change positive">
-                            <ArrowDownRight size={14} /> 12% vs last day
+                            <ArrowDownRight size={14} /> Packet Drops
                         </span>
                     </div>
                 </div>
@@ -102,7 +151,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="stat-info">
                         <span className="stat-label">Security Alerts</span>
-                        <span className="stat-value">{status?.alerts || '3'}</span>
+                        <span className="stat-value">{status?.alerts || '0'}</span>
                         <span className="stat-change negative">
                             High Priority
                         </span>
@@ -150,30 +199,47 @@ const Dashboard: React.FC = () => {
                         <h3>Recent Changes & Alerts</h3>
                     </div>
                     <div className="activity-list">
-                        <div className="activity-item">
-                            <div className="activity-time">10:45 AM</div>
-                            <div className="activity-content">
-                                <strong>Rule #234</strong> updated by Admin
-                            </div>
+                        <div className="activity-header">
+                            <span>Date</span>
+                            <span>ID</span>
+                            <span>Action / Details</span>
+                            <span style={{ textAlign: 'right' }}>User</span>
                         </div>
-                        <div className="activity-item alert">
-                            <div className="activity-time">09:30 AM</div>
-                            <div className="activity-content">
-                                <strong>Alert:</strong> High Drop Rate on INPUT Chain
+                        {logs.length > 0 ? (
+                            logs.map((log) => {
+                                // Flexible field mapping
+                                const timestamp = log.timestamp || log.created_at || log.date || new Date().toISOString();
+                                // Try to find ID in properties first, then regex
+                                const ruleId = log.rule_id || log.resource_id || log.id || extractId(log.details || '') || extractId(log.action || '');
+                                // Try to find User in properties
+                                const user = log.username || log.user?.username || log.user || log.created_by || 'System';
+                                const action = log.action || 'Update';
+                                const details = log.details || log.description || '';
+
+                                return (
+                                    <div key={log.id || Math.random()} className={`activity-item ${getSeverityClass(log)}`}>
+                                        <div className="activity-date" title={new Date(timestamp).toLocaleString()}>
+                                            {formatTime(timestamp)}
+                                        </div>
+                                        <div className="activity-id">
+                                            {ruleId && ruleId !== '-' ? (ruleId.toString().startsWith('#') ? ruleId : `#${ruleId}`) : '-'}
+                                        </div>
+                                        <div className="activity-action" title={details}>
+                                            {action} <span style={{ opacity: 0.7, fontWeight: 400 }}>{details ? `- ${details}` : ''}</span>
+                                        </div>
+                                        <div className="activity-user" title={user}>
+                                            {user}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="activity-item">
+                                <span style={{ color: '#94a3b8', fontStyle: 'italic', gridColumn: '1 / -1', textAlign: 'center' }}>
+                                    No recent activity found.
+                                </span>
                             </div>
-                        </div>
-                        <div className="activity-item success">
-                            <div className="activity-time">Yesterday</div>
-                            <div className="activity-content">
-                                Rollback to <strong>Version v45</strong> Successful
-                            </div>
-                        </div>
-                        <div className="activity-item">
-                            <div className="activity-time">Yesterday</div>
-                            <div className="activity-content">
-                                <strong>Rule #230</strong> created by User1
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

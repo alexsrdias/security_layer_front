@@ -36,46 +36,46 @@ const Layout: React.FC = () => {
 
                 <nav className="sidebar-nav">
                     <div className="nav-group">
-                        <span className="nav-group-title">NAVEGAÇÃO</span>
+                        <span className="nav-group-title">NAVIGATION</span>
                         <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <LayoutDashboard size={20} />
                             <span>Dashboard</span>
                         </NavLink>
                         <NavLink to="/rules" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <Shield size={20} />
-                            <span>Regras</span>
+                            <span>Rules</span>
                         </NavLink>
                         <NavLink to="/objects" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <Box size={20} />
-                            <span>Objetos</span>
+                            <span>Objects</span>
                         </NavLink>
                         <NavLink to="/groups" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <Users size={20} />
-                            <span>Grupos</span>
+                            <span>Groups</span>
                         </NavLink>
                         <NavLink to="/chains" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <Network size={20} />
-                            <span>Cadeias</span>
+                            <span>Chains</span>
                         </NavLink>
                     </div>
 
                     <div className="nav-group">
-                        <span className="nav-group-title">SISTEMA</span>
+                        <span className="nav-group-title">SYSTEM</span>
                         <NavLink to="/logs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <History size={20} />
-                            <span>Logs de Auditoria</span>
+                            <span>Audit Logs</span>
                         </NavLink>
                         <NavLink to="/versions" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <RotateCcw size={20} />
-                            <span>Versões & Rollback</span>
+                            <span>Versions & Rollback</span>
                         </NavLink>
                         <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <FileBarChart size={20} />
-                            <span>Relatórios</span>
+                            <span>Reports</span>
                         </NavLink>
                         <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                             <Settings size={20} />
-                            <span>Configurações</span>
+                            <span>Settings</span>
                         </NavLink>
                     </div>
                 </nav>
@@ -98,7 +98,7 @@ const Layout: React.FC = () => {
                 <header className="top-header">
                     <div className="header-search">
                         <Search size={18} className="search-icon" />
-                        <input type="text" placeholder="Procurar regras, logs ou objetos..." />
+                        <input type="text" placeholder="Search rules, logs or objects..." />
                     </div>
                     <div className="header-actions">
                         <button className="header-btn">

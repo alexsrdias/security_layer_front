@@ -196,38 +196,83 @@
 .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 0;
+    /* Remove gap, handle via padding/border */
+}
+
+.activity-header {
+    display: grid;
+    grid-template-columns: 85px 60px 1fr 80px;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    gap: 12px;
 }
 
 .activity-item {
-    display: flex;
-    gap: 16px;
-    padding-bottom: 16px;
+    display: grid;
+    grid-template-columns: 85px 60px 1fr 80px;
+    gap: 12px;
+    padding: 10px 12px;
     border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
 }
 
 .activity-item:last-child {
     border-bottom: none;
-    padding-bottom: 0;
 }
 
-.activity-time {
+.activity-item:hover {
+    background-color: #f8fafc;
+}
+
+.activity-date {
     font-size: 0.75rem;
-    font-weight: 600;
     color: var(--text-muted);
-    width: 70px;
-    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.activity-content {
-    font-size: 0.9rem;
+.activity-id {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    color: var(--accent-primary);
+    background-color: #eff6ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.75rem;
+}
+
+.activity-action {
+    font-weight: 500;
     color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.activity-item.alert .activity-content {
+.activity-user {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-align: right;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-item.alert .activity-action {
     color: var(--danger);
 }
 
-.activity-item.success .activity-content {
+.activity-item.success .activity-action {
     color: var(--success);
 }
