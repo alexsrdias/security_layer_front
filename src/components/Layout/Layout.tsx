@@ -82,10 +82,18 @@ const Layout: React.FC = () => {
 
                 <div className="sidebar-footer">
                     <div className="user-profile">
-                        <div className="user-avatar">AD</div>
+                        <div className="user-avatar">
+                            {/* Get initials from full name or username */}
+                            {(localStorage.getItem('full_name') || localStorage.getItem('username') || 'AD')
+                                .split(' ')
+                                .map(n => n[0])
+                                .join('')
+                                .substring(0, 2)
+                                .toUpperCase()}
+                        </div>
                         <div className="user-info">
-                            <span className="user-name">Admin User</span>
-                            <span className="user-role">Administrator</span>
+                            <span className="user-name">{localStorage.getItem('full_name') || 'Admin User'}</span>
+                            <span className="user-role">{localStorage.getItem('role_description') || 'System Administrator'}</span>
                         </div>
                     </div>
                     <button className="logout-btn" onClick={handleLogout}>

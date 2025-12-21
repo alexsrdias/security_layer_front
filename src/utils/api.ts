@@ -35,6 +35,24 @@ export const api = {
         const data = await response.json();
         if (data.access_token) {
             localStorage.setItem('token', data.access_token);
+
+            // Access user data from response if available, or fallbacks
+            let userData = data.user || {};
+
+            // SIMULATION: If backend doesn't return user details, we map them based on username for demo purposes
+            if (!userData.full_name && username === 'adias') {
+                userData = {
+                    full_name: 'Alex Dias',
+                    role_description: 'Administrator'
+                };
+            }
+
+            const fullName = userData.full_name || data.full_name || (username === 'adias' ? 'Alex Dias' : 'Admin User');
+            const roleDescription = userData.role_description || data.role_description || 'Administrator';
+
+            localStorage.setItem('username', username);
+            localStorage.setItem('full_name', fullName);
+            localStorage.setItem('role_description', roleDescription);
         }
         return data;
     },

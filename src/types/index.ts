@@ -3,7 +3,9 @@ export type UserRole = 'ADMIN' | 'OPERATOR' | 'VIEWER';
 export interface User {
   id: string;
   username: string;
-  role: UserRole;
+  full_name?: string;
+  role: string;
+  role_description?: string;
   token?: string;
 }
 
